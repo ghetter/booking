@@ -4,10 +4,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
+    <!-- * Пример загрузки стилей из ../../../static/ :-->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+
     <title>{%block title%}{%endblock%}</title>
 </head>
 <body>
+
+    <!-- todo Здесь должен находиться основной каркас приложения. (можно реализовать с помощью flex или grid) -->
+
+    <div id="counter">
+        <h1> Счетчик</h1>
+        <p id="count"> 0 </p>
+        <button id="btn"> +1 </button>
+    </div>
+
+    
     {%block content%}
+    <!-- ! Контент из этого блока находится в ./main_func -->
     {%endblock%}
+
 </body>
+
+<!-- * Пример загрузки скриптов из ../../../static/ : -->
+<script src="{% static 'js/script.js' %}"></script>
+
 </html>
