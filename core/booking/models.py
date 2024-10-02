@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -15,6 +16,7 @@ class Campus(models.Model):
 
 class Audience(models.Model):
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE, related_name='audiences')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='audiences')
     title = None
 
     class Meta:
