@@ -41,17 +41,17 @@ class Reservation(models.Model):
         h_start = self.time_start.hour
         h_end = self.time_end.hour
         if 0 <= h_start < 6 or 0 <= h_end < 6:
-            raise ValidationError('В указанное время нельзя забронировать аудиторию.')
+            raise ValidationError('Fail. Hours of reservation between 0 and 6 not allowed.')
 
     def check_range_of_date(self):
         if self.time_end < self.time_start:
-            raise ValidationError('Указанный интервал бронирования невозможен. Бронь кончается раньше, чем начинается.')
+            raise ValidationError('Fail. Check range of date.')
 
     def check_exist_reservation(self):
         objects = Reservation.objects.filter(time_start__date=self.time_start.date())
         for object in objects:
             if (object.time_start <= self.time_start <= object.time_end) or (object.time_start <= self.time_end <= object.time_end):
-                raise ValidationError('В данное время аудитория занята.')
+                raise ValidationError('Fail. In that time audience is reserved.')
 
     def save(self, *args, **kwargs):
         self.check_range_of_date()

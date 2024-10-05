@@ -5,21 +5,20 @@ from datetime import datetime, timezone
 
 class CampusTestCase(TestCase):
     def setUp(self):
-        self.c1 = Campus.objects.create(title='Num 1')
-        self.c2 = Campus.objects.create(title='Num 2')
+        self.campus1 = Campus.objects.create(title='Num 1')
+        self.campus2 = Campus.objects.create(title='Num 2')
 
     def test_title(self):
-        self.assertEqual(self.c1.title, 'Num 1')
-        self.assertEqual(self.c2.title, 'Num 2')
-
+        self.assertEqual(self.campus1.title, 'Num 1')
+        self.assertEqual(self.campus2.title, 'Num 2')
 
     def test_magic_str_method(self):
-        self.assertEqual(self.c1.__str__(), 'Num 1')
-        self.assertEqual(self.c2.__str__(), 'Num 2')
+        self.assertEqual(self.campus1.__str__(), 'Num 1')
+        self.assertEqual(self.campus2.__str__(), 'Num 2')
 
     def test_meta_class(self):
-        self.assertEqual(self.c1._meta.verbose_name_plural, 'Корпуса')
-        self.assertEqual(self.c2._meta.verbose_name_plural, 'Корпуса')
+        self.assertEqual(self.campus1._meta.verbose_name_plural, 'Корпуса')
+        self.assertEqual(self.campus2._meta.verbose_name_plural, 'Корпуса')
 
 class ReservationTestCase(TestCase):
     def setUp(self):
@@ -37,13 +36,13 @@ class ReservationTestCase(TestCase):
             user=self.user2,
             title=2
         )
-        self.r1 = Reservation.objects.create(
+        self.reservation1 = Reservation.objects.create(
             audience=self.audience1,
             title='R1',
             time_start=datetime(2024, 10, 1, 10, 30, tzinfo=timezone.utc),
             time_end=datetime(2024, 10, 1, 12, 30, tzinfo=timezone.utc),
         )
-        self.r2 = Reservation.objects.create(
+        self.reservation2 = Reservation.objects.create(
             audience=self.audience2,
             title='R2',
             time_start=datetime(2024, 10, 1, 14, 30, tzinfo=timezone.utc),
@@ -51,49 +50,53 @@ class ReservationTestCase(TestCase):
         )
 
     def test_datetime(self):
-        self.assertEqual(self.r1.time_start, datetime(2024, 10, 1, 10, 30, tzinfo=timezone.utc))
-        self.assertEqual(self.r2.time_start, datetime(2024, 10, 1, 14, 30, tzinfo=timezone.utc))
+        self.assertEqual(self.reservation1.time_start, datetime(2024, 10, 1, 10, 30, tzinfo=timezone.utc))
+        self.assertEqual(self.reservation2.time_start, datetime(2024, 10, 1, 14, 30, tzinfo=timezone.utc))
 
-        self.assertEqual(self.r1.time_end, datetime(2024, 10, 1, 12, 30, tzinfo=timezone.utc))
-        self.assertEqual(self.r2.time_end, datetime(2024, 10, 1, 18, 30, tzinfo=timezone.utc))
+        self.assertEqual(self.reservation1.time_end, datetime(2024, 10, 1, 12, 30, tzinfo=timezone.utc))
+        self.assertEqual(self.reservation2.time_end, datetime(2024, 10, 1, 18, 30, tzinfo=timezone.utc))
 
     def test_time_interval(self):
-        self.assertIsNone(self.r1.validate_time_interval())
-        self.assertIsNone(self.r2.validate_time_interval())
+        self.assertIsNone(self.reservation1.validate_time_interval())
+        self.assertIsNone(self.reservation2.validate_time_interval())
 
 
     def test_exist_reservation(self):
-        with self.assertRaisesMessage(ValidationError, 'В данное время аудитория занята.'):
-            Reservation.objects.create(
+        with self.assertRaisesMessage(ValidationError, 'Fail. In that time audience is reserved.'):
+            exist_reservation = Reservation(
                 audience=self.audience2,
                 title='R_EXIST',
                 time_start=datetime(2024, 10, 1, 15, 30, tzinfo=timezone.utc),
                 time_end=datetime(2024, 10, 1, 16, 30, tzinfo=timezone.utc),
             )
+            exist_reservation.check_exist_reservation()
 
 
-        Reservation.objects.create(
+        no_exist_reservation = Reservation(
             audience=self.audience2,
             title='R_NO_EXIST',
             time_start=datetime(2024, 10, 1, 7, 30, tzinfo=timezone.utc),
             time_end=datetime(2024, 10, 1, 9, 30, tzinfo=timezone.utc),
         )
+        no_exist_reservation.check_exist_reservation()
 
     def test_range_of_date(self):
-        with self.assertRaisesMessage(ValidationError, 'Указанный интервал бронирования невозможен. Бронь кончается раньше, чем начинается.'):
-            Reservation.objects.create(
+        with self.assertRaisesMessage(ValidationError, 'Fail. Check range of date.'):
+            invalid_reservation = Reservation(
                 audience=self.audience2,
                 title='Invalid range',
                 time_start=datetime(2024, 10, 17, 7, 30, tzinfo=timezone.utc),
                 time_end=datetime(2024, 10, 1, 9, 30, tzinfo=timezone.utc),
             )
+            invalid_reservation.check_range_of_date()
 
-        Reservation.objects.create(
+        valid_reservation = Reservation(
             audience=self.audience2,
             title='Valid range',
             time_start=datetime(2024, 10, 17, 7, 30, tzinfo=timezone.utc),
             time_end=datetime(2024, 10, 17, 9, 30, tzinfo=timezone.utc),
         )
+        valid_reservation.check_range_of_date()
 
 
 
