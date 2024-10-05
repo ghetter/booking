@@ -10,7 +10,7 @@ class CampusListView(ListView):
     model = Campus
     template_name = 'booking/main_func/campus_list.html'
     context_object_name = 'campuses'
-    queryset = Campus.objets.all()
+    queryset = Campus.objects.all()
 
     # TODO: прописать отображение кампуса к url главной страницы,
     #  отобразить информацию для Frontend
