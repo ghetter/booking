@@ -1,4 +1,3 @@
-from django.urls import reverse
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormMixin
 
@@ -22,11 +21,25 @@ class AudienceListView(ListView):
     context_object_name = 'audiences'
 
     def get_queryset(self):
-        campus = None
+        campus = Campus.objects.get(id=self.kwargs['campus'])
         return Audience.objects.filter(campus=campus)
 
-        # TODO: Дописать query
+    @staticmethod
+    def get_floors_list(audiences):
+        floors = []
+        for floor in [audience.floor for audience in audiences]:
+            if floor in floors:
+                continue
+            floors.append(floor)
+        floors.sort()
+        return floors
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        audiences = context[self.context_object_name]
+        floors = self.get_floors_list(audiences)
+        context['floors'] = floors
+        return context
     # TODO: Отобразить информацию для Frontend
 
 

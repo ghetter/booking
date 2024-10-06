@@ -1,6 +1,21 @@
-{%extends 'booking/base.html' %}
+{%extends 'booking/index.html' %}
 
-{%block title%}{%endblock%}
+{%block title%}some title{%endblock%}
 
 {%block content%}
+{% if campuses %}
+    {% for campus in campuses %}
+        <div>
+            <h1>{{campus.title}}</h1>
+            <p>Телефон: {{campus.phone}}</p>
+            <p>Адрес: {{campus.address}}</p>
+            <p>Начало работы: {{campus.start_of_work}}</p>
+            <p>Конец работы: {{campus.end_of_work}}</p>
+            <a href="{{campus.id}}/">Забронировать</a>
+        </div>
+    {% endfor %}
+{% else %}
+    Нет кампусов
+{% endif %}
+
 {%endblock%}

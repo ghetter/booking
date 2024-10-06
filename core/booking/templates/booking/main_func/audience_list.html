@@ -1,6 +1,20 @@
-{%extends 'booking/base.html' %}
+{%extends 'booking/index.html' %}
 
 {%block title%}{%endblock%}
 
 {%block content%}
+{% if audiences%}
+    {% for floor in floors %}
+        <div>
+            <h1>{{floor}} этаж</h1>
+            {% for audience in audiences %}
+                {% if floor == audience.floor %}
+                    <div> {{audience.title}} </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% else %}
+    <p> No available audiences.</p>
+{% endif %}
 {%endblock%}

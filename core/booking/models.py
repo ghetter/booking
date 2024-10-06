@@ -3,32 +3,54 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 class Campus(models.Model):
-    title = models.CharField(max_length=50, primary_key=True)
+    title = models.CharField(max_length=50, unique=True)
+    address = models.CharField(max_length=100)
+    phone = models.CharField(max_length=30)
+    start_of_work = models.DateTimeField()
+    end_of_work = models.DateTimeField()
+
     class Meta:
         verbose_name_plural = 'Корпуса'
         verbose_name = 'Корпус'
 
+    def get_time_of_work(self):
+        day_start = self.start_of_work.date().strftime('%A')
+        day_end = self.end_of_work.date().strftime('%A')
+        time_start = self.start_of_work.time().strftime('%H:%M')
+        time_end = self.end_of_work.time().strftime('%H:%M')
+        return f"{day_start}-{day_end}: {time_start}-{time_end}"
+
     def __str__(self):
         return self.title
-
 
 class Audience(models.Model):
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE, related_name='audiences')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='audiences')
     title = models.PositiveSmallIntegerField()
+    floor = models.PositiveSmallIntegerField()
 
     class Meta:
         verbose_name_plural = 'Аудитории'
         verbose_name = 'Аудитория'
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
 class Reservation(models.Model):
     audience = models.ForeignKey(Audience, on_delete=models.CASCADE, related_name='reservations')
     title = models.CharField(max_length=100)
     time_start = models.DateTimeField()
     time_end = models.DateTimeField()
+    speaker = models.CharField(max_length=70)
+    _type = models.CharField(
+        max_length=20,
+        choices={
+            'lecture' : 'Лекция',
+            'seminar': 'Семинар',
+            'examination': 'Экзамен',
+        },
+        default='Лекция'
+    )
 
     class Meta:
         verbose_name_plural = 'Забронированные аудитории'
