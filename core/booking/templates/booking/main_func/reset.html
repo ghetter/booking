@@ -1,0 +1,17 @@
+{%extends 'booking/base.html' %}
+
+{%block title%}
+<!-- * title страницы -->
+Восстановление доступа | Booking
+{%endblock%}
+
+{%block content%}
+<!-- * Контент (html) данной страницы прописывается здесь -->
+<form action="#" method="post">
+    <div class="form__title">
+        Сброс пароля <span>или <a href="login.html">войдите</a></span>
+    </div>
+    <input type="email" id="email" class="form__input password" placeholder="Введите почту" required>
+    <button type="submit" class="form__submit _tr02easeIn">Войти</button>
+</form>
+{%endblock%}
