@@ -1,0 +1,31 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">]
+    <link href="{% static 'css/registration_service/reset.css' %}" rel="stylesheet">
+    <link href="{% static 'css/registration_service/styles.css' %}" rel="stylesheet">
+
+    <title>{%block title%}{%endblock%}</title>
+</head>
+<body>\
+    <div class="wrapper">
+        <img src="{% static 'img/background-image.jpg' %}" alt="background image" class="full-bg-image">
+        <div class="container">
+            <div class="content">
+                <div class="logo">
+                    <div class="logo_sup">Забронируйте аудиторию в несколько кликов!</div>
+                    <a href="https://tsu.ru/" target="_blank"><img src="{% static 'img/logo.svg' %}" alt=""></a>
+                </div>
+                <div class="form">
+                    <div class="form__inner">                          
+                        {%block content%}
+                        {%endblock%}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
