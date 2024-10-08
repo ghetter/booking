@@ -6,13 +6,19 @@
     <meta charset="UTF-8">
 
     <!-- * Пример загрузки стилей из ../../../static/ :-->
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <link href="{% static 'css/booking/styles.css' %}" rel="stylesheet">
 
     <title>{%block title%}{%endblock%}</title>
 </head>
 <body>
 
     <!-- todo Здесь должен находиться основной каркас приложения. (можно реализовать с помощью flex или grid) -->
+
+    <div id="counter">
+        <h1> Счетчик</h1>
+        <p id="count"> 0 </p>
+        <button id="btn"> +1 </button>
+    </div>
 
     
     {%block content%}

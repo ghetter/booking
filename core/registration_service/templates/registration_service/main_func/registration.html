@@ -1,0 +1,20 @@
+{%extends 'registration_service/index.html' %}
+
+{%block title%}
+Регистрация | Booking
+{%endblock%}
+
+{%block content%}
+<form action="#" method="post">
+    <div class="form__title">
+        Регистрация <span>или <a href="login.html">войдите</a></span>
+    </div>
+    <input type="text" id="fname" class="form__input fname" placeholder="Введите имя" required>
+    <input type="text" id="login" class="form__input username" placeholder="Введите логин" required>
+    <input type="email" id="email" class="form__input email" placeholder="Введите почту" required>
+    <input type="password" id="password" class="form__input password" placeholder="Введите пароль" required>
+    <input type="password" id="repassword" class="form__input password" placeholder="Повторите пароль" required>
+    <button type="submit" class="form__submit _tr02easeIn">Войти</button>
+</form>
+
+{%endblock%}
