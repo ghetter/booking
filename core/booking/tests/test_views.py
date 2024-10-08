@@ -1,7 +1,6 @@
 from django.urls import reverse
 from django.test import TestCase, RequestFactory, Client
 from django.utils import timezone
-from django.views.generic import ListView
 
 from booking.views import CampusListView, AudienceListView
 from booking.models import Campus, Audience, User
@@ -9,7 +8,6 @@ from booking.models import Campus, Audience, User
 
 class CampusViewTests(TestCase):
     def setUp(self):
-        self.factory = RequestFactory()
         self.campus = Campus.objects.create(
             title='test',
             address='-',
@@ -21,7 +19,7 @@ class CampusViewTests(TestCase):
 
     def test_query_set(self):
         self.assertQuerySetEqual(
-            self.view.queryset, [self.campus]
+            self.view.queryset, Campus.objects.all()
         )
 
 class AudienceViewTests(TestCase):
@@ -50,7 +48,7 @@ class AudienceViewTests(TestCase):
         request = self.factory.get(reverse('audience_list_view', kwargs=kwargs))
         self.view.setup(request, **kwargs)
         self.assertQuerySetEqual(
-            self.view.get_queryset(), [self.audience]
+            self.view.get_queryset(), Audience.objects.filter(campus=self.campus)
         )
 
     def test_context_data(self):
