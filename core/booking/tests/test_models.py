@@ -9,8 +9,8 @@ def create_campus_object(title):
         title=title,
         phone='-',
         address='-',
-        start_of_work=datetime.now(tz=timezone.utc),
-        end_of_work=datetime.now(tz=timezone.utc)
+        start_of_work=datetime(2024, 12, 1, 8, 0, tzinfo=timezone.utc),
+        end_of_work=datetime(2024, 12, 1, 20, 0, tzinfo=timezone.utc),
     )
 
 class CampusTestCase(TestCase):
@@ -29,6 +29,15 @@ class CampusTestCase(TestCase):
     def test_meta_class(self):
         self.assertEqual(self.campus1._meta.verbose_name_plural, 'Корпуса')
         self.assertEqual(self.campus2._meta.verbose_name_plural, 'Корпуса')
+
+    def test_time_of_work(self):
+        day_start = self.campus1.start_of_work.date().strftime('%A')
+        day_end = self.campus1.end_of_work.date().strftime('%A')
+        time_start = self.campus1.start_of_work.time().strftime('%H:%M')
+        time_end = self.campus1.end_of_work.time().strftime('%H:%M')
+        self.assertEqual(
+            self.campus1.get_time_of_work(), f"{day_start}-{day_end}: {time_start}-{time_end}"
+        )
 
 class ReservationTestCase(TestCase):
     def setUp(self):
@@ -73,8 +82,41 @@ class ReservationTestCase(TestCase):
         self.assertEqual(self.reservation2.time_end, datetime(2024, 10, 1, 18, 30, tzinfo=timezone.utc))
 
     def test_time_interval(self):
-        self.assertIsNone(self.reservation1.validate_time_interval())
-        self.assertIsNone(self.reservation2.validate_time_interval())
+        campus = Campus(
+            title='test_time',
+            address='-',
+            phone='-',
+            start_of_work=datetime(2024, 1, 12, 8, 0, tzinfo=timezone.utc),
+            end_of_work=datetime(2024, 1, 12, 20, 0, tzinfo=timezone.utc)
+        )
+        audience = Audience(
+            campus=campus,
+            user=self.user1,
+            title=12,
+            floor=12
+        )
+        bad_reservation = Reservation(
+            audience=audience,
+            title='R3',
+            time_start=datetime(2024, 10, 1, 1, 30, tzinfo=timezone.utc),
+            time_end=datetime(2024, 10, 1, 4, 30, tzinfo=timezone.utc),
+            speaker='lector',
+            _type='lecture'
+        )
+        exception_message = "Fail. Hours of reservation between %d and %d not allowed." % (campus.end_of_work.hour, campus.start_of_work.hour)
+        with self.assertRaisesMessage(ValidationError, exception_message):
+            bad_reservation.validate_time_interval()
+
+        good_reservation = Reservation(
+            audience=audience,
+            title='R3',
+            time_start=datetime(2024, 10, 1, 8, 0, tzinfo=timezone.utc),
+            time_end=datetime(2024, 10, 1, 16, 0, tzinfo=timezone.utc),
+            speaker='lector',
+            _type='lecture'
+        )
+        self.assertIsNone(good_reservation.validate_time_interval())
+
 
 
     def test_exist_reservation(self):

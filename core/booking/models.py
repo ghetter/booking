@@ -34,7 +34,7 @@ class Audience(models.Model):
         verbose_name = 'Аудитория'
 
     def __str__(self):
-        return str(self.title)
+        return self.title
 
 class Reservation(models.Model):
     audience = models.ForeignKey(Audience, on_delete=models.CASCADE, related_name='reservations')
@@ -62,8 +62,12 @@ class Reservation(models.Model):
     def validate_time_interval(self):
         h_start = self.time_start.hour
         h_end = self.time_end.hour
-        if 0 <= h_start < 6 or 0 <= h_end < 6:
-            raise ValidationError('Fail. Hours of reservation between 0 and 6 not allowed.')
+        hour_start_campus = self.audience.campus.start_of_work.hour
+        hour_end_campus = self.audience.campus.end_of_work.hour
+        if h_end < hour_start_campus or h_start < hour_start_campus:
+            raise ValidationError('Fail. Hours of reservation between %d and %d not allowed.' % (hour_end_campus, hour_start_campus))
+        if h_end >= hour_end_campus or h_start >= hour_end_campus:
+            raise ValidationError('Fail. Hours of reservation between %d and %d not allowed.' % (hour_end_campus, hour_start_campus))
 
     def check_range_of_date(self):
         if self.time_end < self.time_start:
