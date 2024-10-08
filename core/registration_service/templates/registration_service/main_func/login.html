@@ -1,0 +1,23 @@
+{%extends 'registration_service/index.html' %}
+
+{%block title%}
+Авторизация | Booking
+{%endblock%}
+
+{%block content%}
+<form action="#" method="post">
+    <div class="form__title">
+        Вход <span>или <a href="registration.html">зарегистрируйтесь</a></span>
+    </div>
+    <input type="username" class="form__input username" placeholder="Логин" required>
+    <input type="password" class="form__input password" placeholder="Пароль" required>
+    <div class="form__options">
+        <div class="form__options_sel">
+            
+        <label for="rememberPassID"><input type="checkbox" name="rememberPass" id="rememberPassID" value="YesRemember"/> Запомнить пароль</label>
+        </div>
+        <span><a href="reset.html">Забыли пароль?</a></span>
+    </div>
+    <button type="submit" class="form__submit _tr02easeIn">Войти</button>
+</form>
+{%endblock%}

@@ -10,7 +10,7 @@
 ### Необходимые улучшения для Frontend
 
 ---
-* Реализовать верстку согласно [макету] (http://ссылка)
+* Реализовать верстку согласно [макету](https://www.figma.com/design/UDZDQ5GXCurYGgpUgwrK2B/Booking?node-id=50-2&t=eOMwZ0Ap1H0cfoCw-1)
 * Различные анимации реализовать с помощью JavaScript
 * Стили прописывать с помощью CSS
 
