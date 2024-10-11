@@ -1,33 +1,45 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
 
-    <!-- * Пример загрузки стилей из ../../../static/ :-->
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <link href="{% static 'css/booking/styles.css' %}" rel="stylesheet">
+    <link href="{% static 'css/booking/audinece_list.css' %}" rel="stylesheet">
 
     <title>{%block title%}{%endblock%}</title>
 </head>
 <body>
-
-    <!-- todo Здесь должен находиться основной каркас приложения. (можно реализовать с помощью flex или grid) -->
-
-    <div id="counter">
-        <h1> Счетчик</h1>
-        <p id="count"> 0 </p>
-        <button id="btn"> +1 </button>
+    <div class="wrapper">
+        <header class="header">
+            <div class="container">
+                <div class="header__row">
+                    <div class="header__logo">
+                        <a href="https://tsu.ru" target="_blank"><img src="{% static 'img/booking/logo.svg' %}" alt=""></a>
+                    </div>
+                    <div class="header__timestamp timestamp">
+                        <div class="timestamp__time">
+                            <span id="current-time"></span>
+                        </div>
+                        <div class="timestamp__date">
+                            <span id="current-date"></span>
+                        </div>
+                    </div>
+                    <div class="header__welcome">
+                        Добро пожаловать, <br> <span class="current-user">Кирилл Дробков</span>!
+                    </div>
+                    <a href="#" class="header__log-out">
+                        <img src="{% static 'img/booking/logout.svg' %}" alt="">
+                    </a>
+                </div>
+            </div>
+        </header>
+        {%block content%}
+        {%endblock%}
     </div>
-
-    
-    {%block content%}
-    <!-- ! Контент из этого блока находится в ./main_func -->
-    {%endblock%}
-
 </body>
 
-<!-- * Пример загрузки скриптов из ../../../static/ : -->
-<script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'js/booking/script.js' %}"></script>
 
 </html>

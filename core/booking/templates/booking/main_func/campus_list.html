@@ -1,6 +1,88 @@
-{%extends 'booking/base.html' %}
+{%extends 'booking/index.html' %}
 
-{%block title%}{%endblock%}
+{%block title%}Campus Selecting | Booking{%endblock%}
 
 {%block content%}
+{% if campuses %}
+        <main class="campuses">
+            <div class="container">
+                <div class="campuses__title">Выберите корпус</div>
+            </div>
+            <div class="container">
+                <div class="campuses__column campuses__list">
+                    {% for campus in campuses %}
+                        <div class="campuses__item campus campus-selected">
+                            <div class="campus__id">
+                                {{campus.title}}
+                            </div>
+                            <div class="campus__address">
+                                {{campus.address}}
+                            </div>
+                            <img src="img/booking/campus_select-arw.svg" alt="" class="campus__select">
+                        </div>
+                    {% endfor %}
+                    <!--Костыль, который нужно исправить: ниже перечислены корпуса в статусе "В разработке". 
+                        Необходимо дополить б/д так, чтобы корпуса различались по доступности. 
+                        Если недоступны - блоку добавляется класс "campus-disabled". 
+                        Сам блок включает айди корпуса, вместо его адреса - текст "В разработке".
+                    -->
+                    <div class="campuses__item campus campus-disabled">
+                        <div class="campus__id">
+                            Корпус №15, ТГУ
+                        </div>
+                        <div class="campus__address">
+                            В разработке
+                        </div>
+                        
+                    </div>
+                    <div class="campuses__item campus campus-disabled">
+                        <div class="campus__id">
+                            Корпус №1, ТГУ
+                        </div>
+                        <div class="campus__address">
+                            В разработке
+                        </div>
+                    </div>
+                </div>
+
+                {% for campus in campuses %}
+                    <div class="campuses__column campus__detailed">
+                        <!-- Для правильного функционирования iframe хочется попробовать подгружать их строкой в б/д. 
+                         Для каждого корпуса имеется своя "строка" (а на деле это блок <iframe>).
+                         -->
+                        <iframe class="campus__location" id="map" src="https://yandex.ru/map-widget/v1/?um=constructor%3Ac0681c1b6ce221ab01bb93189a1af718e68719ab108710c7c82f49cf7274d957&amp;source=constructor" width="580" height="242" frameborder="0"></iframe>
+                        <div class="campus__content">
+                            <div class="campus__id">
+                                {{campus.title}}
+                            </div>
+                            <div class="campus__info">
+                                <div class="campus__info-section">
+                                    <div class="campus__info-heading">Адрес:</div>
+                                    <div>{{campus.address}}</div>
+                                </div>
+                                <div class="campus__info-section">
+                                    <div class="campus__info-heading">Время работы:</div>
+                                    <div>
+                                        <div>{{campus.get_time_of_work}}</div>
+                                        <div class="line-break"></div>
+                                        Вс: <span>Выходной</span>
+                                    </div>
+
+                                </div>
+                                <div class="campus__info-section">
+                                    <div class="campus__info-heading">Телефон:</div>
+                                    <div>{{campus.phone}}</div>
+                                </div>
+                            </div>
+                            <a href="{{campus.id}}/" class="campus__booking ">Забронировать</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </main>
+    {% endfor %}
+{% else %}
+    Нет кампусов
+{% endif %}
+
 {%endblock%}
