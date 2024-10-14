@@ -5,11 +5,12 @@
 {%endblock%}
 
 {%block content%}
-<form action="#" method="post">
+<form action="{% url 'password_reset' %}" method="post">
+    {% csrf_token %}
     <div class="form__title">
-        Сброс пароля <span>или <a href="login.html">войдите</a></span>
+        Сброс пароля <span>или <a href="{% url 'login' %}">войдите</a></span>
     </div>
-    <input type="email" id="email" class="form__input password" placeholder="Введите почту" required>
-    <button type="submit" class="form__submit _tr02easeIn">Войти</button>
+    {{form.email}}
+    <button type="submit" class="form__submit _tr02easeIn">Сбросить</button>
 </form>
 {%endblock%}

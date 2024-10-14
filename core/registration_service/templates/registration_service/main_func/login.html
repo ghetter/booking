@@ -5,18 +5,23 @@
 {%endblock%}
 
 {%block content%}
-<form action="#" method="post">
+
+<form action="{% url 'login' %}" method="post">
+    {% csrf_token %}
     <div class="form__title">
-        Вход <span>или <a href="registration.html">зарегистрируйтесь</a></span>
+        Вход <span>или <a href="{% url 'registration' %}">зарегистрируйтесь</a></span>
     </div>
-    <input type="username" class="form__input username" placeholder="Логин" required>
-    <input type="password" class="form__input password" placeholder="Пароль" required>
+    {{form.username}}
+    {{form.password}}
     <div class="form__options">
         <div class="form__options_sel">
-            
-        <label for="rememberPassID"><input type="checkbox" name="rememberPass" id="rememberPassID" value="YesRemember"/> Запомнить пароль</label>
+
+        <label for="rememberPassID">
+            {{form.remember}}
+            Запомнить пароль
+        </label>
         </div>
-        <span><a href="reset.html">Забыли пароль?</a></span>
+        <span><a href="{% url 'password_reset' %}">Забыли пароль?</a></span>
     </div>
     <button type="submit" class="form__submit _tr02easeIn">Войти</button>
 </form>

@@ -4,3 +4,5 @@ psycopg2==2.9.9
 redis==5.0.8
 sqlparse==0.5.1
 tzdata==2024.1
+django-debug-toolbar==4.4.6
+loguru
