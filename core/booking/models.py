@@ -8,6 +8,7 @@ class Campus(models.Model):
     phone = models.CharField(max_length=30)
     start_of_work = models.DateTimeField()
     end_of_work = models.DateTimeField()
+    is_active = models.BooleanField()
 
     class Meta:
         verbose_name_plural = 'Корпуса'

@@ -10,7 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
+import socket
+
 from pathlib import Path
+
+from core.custom_logger import DjangoLoguruHandler
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'booking.apps.BookingConfig',
     'registration_service.apps.RegistrationServiceConfig',
 ]
@@ -141,3 +144,28 @@ CACHES = {
         },
     }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file" : {
+            "()" : DjangoLoguruHandler,
+            "level" : "DEBUG"
+        }
+    },
+    "root": {
+        "handlers": ["file"],
+        "level": "DEBUG",
+    },
+}
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]

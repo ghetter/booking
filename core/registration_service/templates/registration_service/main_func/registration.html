@@ -5,16 +5,27 @@
 {%endblock%}
 
 {%block content%}
-<form action="#" method="post">
+<form action="{% url 'registration' %}" method="post">
+    {% csrf_token %}
     <div class="form__title">
-        Регистрация <span>или <a href="login.html">войдите</a></span>
+        Регистрация <span>или <a href="{% url 'login' %}">войдите</a></span>
     </div>
-    <input type="text" id="fname" class="form__input fname" placeholder="Введите имя" required>
-    <input type="text" id="login" class="form__input username" placeholder="Введите логин" required>
-    <input type="email" id="email" class="form__input email" placeholder="Введите почту" required>
-    <input type="password" id="password" class="form__input password" placeholder="Введите пароль" required>
-    <input type="password" id="repassword" class="form__input password" placeholder="Повторите пароль" required>
+    {{form.first_name}}
+    {{form.username}}
+    {{form.email}}
+    {{form.password1}}
+    {{form.password2}}
+    {% if form.errors %}
+        <div class="form-errors">
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    <li>{{ field }}: {{ errors }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
     <button type="submit" class="form__submit _tr02easeIn">Войти</button>
+
 </form>
 
 {%endblock%}
