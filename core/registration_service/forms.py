@@ -1,5 +1,4 @@
 from django import forms
-from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm, BaseUserCreationForm, UsernameField, PasswordResetForm, SetPasswordForm
 
@@ -100,22 +99,6 @@ class ResetForm(PasswordResetForm):
             }
         )
     )
-
-    def send_mail(
-            self,
-            subject_template_name,
-            email_template_name,
-            context,
-            from_email,
-            to_email,
-            html_email_template_name=None,
-    ):
-        domain = context['domain']
-        protocol = context['protocol']
-        uid = context['uid']
-        token = context['token']
-        url = f"{protocol}://" + domain + reverse('password_reset_confirm', args=[uid, token])
-        print (url)
 
 class PasswordSetForm(SetPasswordForm):
     new_password1 = forms.CharField(
