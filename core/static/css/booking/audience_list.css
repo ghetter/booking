@@ -15,9 +15,10 @@
           align-items: center;
   margin-bottom: 40px;
 }
-.main__title {
+.main__header .main__title {
   margin-bottom: 0;
 }
+
 .main__search-outer {
   position: relative;
 }
@@ -61,9 +62,6 @@
   display: flex;
   gap: 20px;
   color: #0072BC;
-}
-.audience__row:hover .audience__floor {
-  border-color: #0072BC;
 }
 .audience__row:not(:last-child) {
   margin-bottom: 40px;
