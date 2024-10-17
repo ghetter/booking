@@ -5,8 +5,9 @@
 <head>
     <meta charset="UTF-8">
 
+    <link href="{% static 'css/reset.css' %}" rel="stylesheet">
     <link href="{% static 'css/booking/styles.css' %}" rel="stylesheet">
-    <link href="{% static 'css/booking/audinece_list.css' %}" rel="stylesheet">
+    <link href="{% static 'css/booking/audience_list.css' %}" rel="stylesheet">
 
     <title>{%block title%}{%endblock%}</title>
 </head>
@@ -35,6 +36,7 @@
                 </div>
             </div>
         </header>
+        <script src="{% static 'js/booking/campuses.js' %}"></script>
         {%block content%}
         {%endblock%}
     </div>

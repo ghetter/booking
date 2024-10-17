@@ -1,11 +1,249 @@
-{%extends 'booking/base.html' %}
+{%extends 'booking/index.html' %}
 
 {%block title%}
-<!-- * title страницы -->
+Audience Detail | Booking
 {%endblock%}
 
 {%block content%}
 <!-- * Контент (html) данной страницы прописывается здесь -->
 
+<main class="main schedule">
+    <div class="container">
+        <div class="main__title">Расписание аудитории 102</div>
+    </div>
+    <div class="container">
+        <div class="schedule__period period">
+            <div class="period__from">30 сентября 2024</div>
+            <span>–</span>
+            <div class="period__to">5 октября 2024</div>
+            <span>•</span>
+            <div class="period_week">5-я неделя</div>
+        </div>
+        <div class="schedule__nav nav">
+            <a class="nav__btn Back" href="#">
+                <img src="{% static 'img/booking/navBtn.svg' %}" alt="">
+                <p>Предыдущая неделя</p>
+            </a>
+            <a class="nav__btn Forward" href="#">
+                <img src="{% static 'img/booking/navBtn.svg' %}" alt="">
+                <p>Следующая неделя</p>
+            </a>
+        </div>
+        <div class="schedule__table table">
+            <div class="table__header-corn"></div>
+            <div class="table__header">
+                <div class="table__day">пн</div>
+                <div class="table__date">30 сент.</div>
+            </div>
+            <div class="table__header">
+                <div class="table__day">вт</div>
+                <div class="table__date">31 сент.</div>
+            </div>
+            <div class="table__header">
+                <div class="table__day">ср</div>
+                <div class="table__date">1 окт.</div>
+            </div>
+            <div class="table__header">
+                <div class="table__day">чт</div>
+                <div class="table__date">2 окт.</div>
+            </div>
+            <div class="table__header">
+                <div class="table__day">пт</div>
+                <div class="table__date"></div>
+            </div>
+            <div class="table__header">
+                <div class="table__day">сб</div>
+                <div class="table__date"></div>
+            </div>
+
+            <div class="table__time-slot time-slot">
+                <div class="time-slot__start">8:45</div>
+                <div class="time-slot__end">10:20</div>
+            </div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field">
+                <div class="table__subject seminar">
+                    <div class="subject__name">История России</div>
+                    <div class="subject__teacher">Томилова И.В.</div>
+                </div>
+            </div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+
+            <div class="table__time-slot time-slot">
+                <div class="time-slot__start">10:35</div>
+                <div class="time-slot__end">12:10</div>
+            </div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field">
+                <div class="table__subject exam">
+                    <div class="subject__name">Управление проектами</div>
+                    <div class="subject__teacher">Матюгина Э.Г.</div>
+                </div>
+            </div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+
+            <div class="table__time-slot time-slot">
+                <div class="time-slot__start">12:25</div>
+                <div class="time-slot__end">14:00</div>
+            </div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+
+            <div class="table__time-slot time-slot">
+                <div class="time-slot__start">14:45</div>
+                <div class="time-slot__end">16:20</div>
+            </div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field">
+                <div class="table__subject lecture">
+                    <div class="subject__name">Математический анализ</div>
+                    <div class="subject__teacher">Пауль С.В.</div>
+                </div></div>
+
+            <div class="table__time-slot time-slot">
+                <div class="time-slot__start">16:35</div>
+                <div class="time-slot__end">18:10</div>
+            </div>
+            <div class="table__field"></div>
+            <div class="table__field">
+                <div class="table__subject consult">
+                    <div class="subject__name">Физика</div>
+                    <div class="subject__teacher">Конов. И.А.</div>
+                </div></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+
+            <div class="table__time-slot time-slot">
+                <div class="time-slot__start">18:25</div>
+                <div class="time-slot__end">20:00</div>
+            </div>
+            <div class="table__field">
+                <div class="table__subject subject practice">
+                    <div class="subject__name">Алгоритмы и структуры данных</div>
+                    <div class="subject__teacher">Андреева В.В.</div>
+                </div>
+            </div>
+            <div class="table__field"></div>
+            <div class="table__field">
+            </div>
+            <div class="table__field">
+            </div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+
+            <div class="table__time-slot time-slot">
+                <div class="time-slot__start">20:15</div>
+                <div class="time-slot__end">21:50</div>
+            </div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+            <div class="table__field"></div>
+    </div>
+</main>
+<!-- Как ориентироваться в таблице -->
+<!-- Таблица построена следующим образом: time-slot .. monday_field .. tuesday_field ... sunday_field -->
+<div class="pop-ups">
+        <div class="pop-up__bookingForm pop-up">
+            <div class="container">
+            <form action="#" method="POST" class="form">
+                <div class="form__header">
+                    <div class="form__header-title">
+                        Бронирование аудитории
+                    </div>
+                    <div class="form__header-CloseBtn">
+                        <img src="{% static 'img/booking/crossBtn.svg' %}" alt="">
+                    </div>
+                </div>
+                <div class="form__field-auto">
+                    <div class="form__field-heading">Аудитория</div>
+                    <div class="form__field-value"><!-- current auditorium -->101</div>
+                </div>
+                <div class="form__field-auto">
+                    <div class="form__field-heading">Время</div>
+                    <div class="form__field-value">
+                        <!-- choosen time-frame -->
+                         <div class="form__field-value-From">8:45</div>
+                         <div class="from__field-value-To">10:20</div>
+                        </div>
+                </div>
+                <div class="form__field-auto">
+                    <div class="form__field-heading">Преподаватель</div>
+                    <div class="form__field-value">
+                        <!-- current user -->
+                         Дробков Кирилл
+                        </div>
+                </div>
+                <div class="form__field-manual">
+                    <div class="form__field-heading">Название предмета</div>
+                    <input class="form__input" type="text" placeholder="Введите название предмета">
+                </div>
+                <div class="form__field-manual">
+                    <div class="form__field-heading">Вид занятия</div>
+                    <select hidden placeholder="Выберите" name="classType" class="form__select">
+                        <option disabled selected class="form__select-value" value="none">
+                            <span>Выберите</span>
+                        </option>
+                        <option class="form__select-value" value="lecture">
+                            <span>Лекция</span>
+                        </option>
+                        <option class="form__select-value" value="practice">
+                            <span>Практическое занятие</span>
+                        </option>
+                        <option class="form__select-value" value="seminar">
+                            <span>Семинар</span>
+                        </option>
+                        <option class="form__select-value" value="exam">
+                            <span>Экзамен</span>
+                        </option>
+                        <option class="form__select-value" value="lab">
+                            <span>Лабораторная</span>
+                        </option>
+                    </select>
+                    <div class="form__select">
+                        <div class="form__list">
+                            <div class="form__list-item first-typed"></div>
+                            <div class="form__list-item lecture-typed">
+                                Лекция
+                            </div>
+                            <div class="form__list-item practice-typed">
+                                Практическое занятие
+                            </div>
+                            <div class="form__list-item seminar-typed">
+                                Семинар
+                            </div>
+                            <div class="form__list-item exam-typed">
+                                Экзамен
+                            </div>
+                            <div class="form__list-item lab-typed">
+                                Лабораторная
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="form__button form__booking">Забронировать</button>
+            </form>
+            </div>
+        </div>
+</div>
 
 {%endblock%}
