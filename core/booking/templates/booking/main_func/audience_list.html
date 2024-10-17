@@ -1,6 +1,40 @@
-{%extends 'booking/base.html' %}
+{% extends 'booking/index.html' %}
 
-{%block title%}{%endblock%}
+{% block title %}Audience Selecting | Booking {% endblock %}
 
-{%block content%}
-{%endblock%}
+{% block content %}
+{% if audiences %}
+    <main class="main audience">
+        <div class="container main__header">
+            <div class="audience__title main__title">Выберите аудиторию</div>
+            <div class="audience__search-outer main__search-outer">
+                <svg class="search-inner-icon" width="24" height="25" viewBox="0 0 24 25" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M23.7281 23.3022L16.8315 15.964C19.8698 12.1681 19.7026 6.53265 16.2861 2.93881C14.4851 1.04402 12.074 0 9.49693 0C7.00164 0 4.64422 0.988807 2.85908 2.78196C1.04587 4.60523 0.0306673 7.04588 0.00260287 9.65467C-0.0266818 12.2622 0.934831 14.7267 2.70777 16.5914C4.50878 18.4862 6.9211 19.5302 9.49815 19.5302C11.686 19.5302 13.7664 18.771 15.449 17.3744L22.3285 24.6951C22.5201 24.8984 22.7739 25.0013 23.0289 25.0013C23.2729 25.0013 23.517 24.9084 23.7061 24.7202C24.0917 24.3349 24.1014 23.7 23.7281 23.3022ZM4.10002 15.191C1.18619 12.1254 1.23988 7.21151 4.22081 4.21498C5.68871 2.7393 7.59343 2.00397 9.49693 2.00271C11.4578 2.00271 13.4162 2.78322 14.8951 4.33921C17.8089 7.40476 17.7552 12.3187 14.7743 15.3152C13.3064 16.7909 11.4017 17.5275 9.49815 17.5275C7.5373 17.5275 5.57889 16.747 4.10002 15.191Z" fill="#868686"/>
+                </svg>
+                <input type="search" class="audience__search main__search" placeholder="Поиск">
+            </div>
+        </div>
+
+        <div class="container">
+            {% for floor in floors %}
+                <div class="audience__row">
+                    <div class="audience__floor">
+                        <div class="audience__floor-id">{{ floor }} этаж</div>
+                    </div>
+                    <div class="audience__list">
+                        {% for audience in audiences %}
+                            {% if floor == audience.floor %}
+                                <a href="#" class="audience__item">
+                                    <div class="audience__id">{{ audience.title }}</div>
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+{% else %}
+    <p>No available audiences.</p>
+{% endif %}
+{% endblock %}
