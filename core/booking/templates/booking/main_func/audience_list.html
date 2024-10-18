@@ -9,7 +9,7 @@
             <h1>{{floor}} этаж</h1>
             {% for audience in audiences %}
                 {% if floor == audience.floor %}
-                    <div> {{audience.title}} </div>
+                    <div> <a href="{% url 'audience_detail' campus=audience.campus.id audience_id=audience.id %}"> {{audience.title}} </a> </div>
                 {% endif %}
             {% endfor %}
         </div>

@@ -1,12 +1,12 @@
+from datetime import time, date, datetime
 from django import forms
 from booking.models import Reservation
 
 
 class ReservationForm(forms.ModelForm):
-
     class Meta:
         model = Reservation
-        fields = ('title', 'time_start', 'time_end')
+        fields = ('title', 'speaker', 'time_end', 'time_start', 'type')
 
     def __init__(self, *args, **kwargs):
         self.audience = kwargs.pop('audience', None)

@@ -35,7 +35,7 @@ class Audience(models.Model):
         verbose_name = 'Аудитория'
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
 class Reservation(models.Model):
     audience = models.ForeignKey(Audience, on_delete=models.CASCADE, related_name='reservations')
@@ -43,7 +43,7 @@ class Reservation(models.Model):
     time_start = models.DateTimeField()
     time_end = models.DateTimeField()
     speaker = models.CharField(max_length=70)
-    _type = models.CharField(
+    type = models.CharField(
         max_length=20,
         choices={
             'lecture' : 'Лекция',
