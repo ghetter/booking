@@ -1,9 +1,12 @@
+from datetime import datetime
+
 from django.urls import reverse
 from django.test import TestCase, RequestFactory, Client
 from django.utils import timezone
 
-from booking.views import CampusListView, AudienceListView
-from booking.models import Campus, Audience, User
+from booking.views import CampusListView, AudienceListView, AudienceDetailView
+from booking.models import Campus, Audience, User, Reservation
+
 
 
 class CampusViewTests(TestCase):
@@ -64,6 +67,87 @@ class AudienceViewTests(TestCase):
 
 
 
+class AudienceDetailViewTest(TestCase):
+    def setUp(self):
+        self.campus = Campus.objects.create(
+            title='test',
+            address='-',
+            phone='-',
+            start_of_work=timezone.datetime(2024, 12, 1, 8, 0),
+            end_of_work=timezone.datetime(2024, 12, 1, 20, 0),
+            is_active=True
+        )
+        self.user = User.objects.create_user('test_user')
+        self.audience = Audience.objects.create(
+            campus=self.campus,
+            user=self.user,
+            floor=1,
+            title=111
+        )
+        self.view = AudienceDetailView()
+        self.factory = RequestFactory()
+
+
+    def test_form_kwargs(self):
+        kwargs = dict(campus=self.campus.id, audience_id=self.audience.id)
+        request = self.factory.get(
+            reverse(
+                'audience_detail',
+                kwargs=kwargs
+            )
+        )
+        self.view.setup(request, **kwargs)
+        data = self.view.get_form_kwargs()
+        self.assertTrue(
+            'audience' in data
+        )
+
+    def test_object(self):
+        kwargs = dict(campus=self.campus.id, audience_id=self.audience.id)
+        request = self.factory.get(
+            reverse(
+                'audience_detail',
+                kwargs=kwargs
+            )
+        )
+        self.view.setup(request, **kwargs)
+        obj = self.view.get_object()
+        self.assertEqual(
+            obj, Audience.objects.get(pk=self.audience.id)
+        )
+
+    def test_context_data(self):
+        reservation = Reservation(
+            audience=self.audience,
+            title='134',
+            time_start=datetime(2024, 10, 17, 8, 45),
+            time_end=datetime(2024, 10, 17, 10, 20),
+            speaker='Lector',
+            type='seminar'
+        )
+        reservation.save()
+
+        kwargs = dict(campus=self.campus.id, audience_id=self.audience.id)
+        request = self.factory.get(
+            reverse(
+                'audience_detail',
+                kwargs=kwargs
+            )
+        )
+        self.view.setup(request, **kwargs)
+
+        context = self.view.get_context_data(**kwargs)
+        self.assertTrue('reservations' in context)
+        self.assertTrue('form' in context)
+        self.assertTrue('date' in context)
+        self.assertTrue('days' in context)
+        self.assertTrue('class_time' in context)
+        self.assertTrue('next_date' in context)
+        self.assertTrue('prev_date' in context)
+
+        self.assertQuerySetEqual(
+            context['reservations'], [reservation]
+        )
 
 
 

@@ -1,11 +1,41 @@
-{%extends 'booking/base.html' %}
+{%extends 'booking/index.html' %}
 
 {%block title%}
 <!-- * title страницы -->
 {%endblock%}
 
 {%block content%}
-<!-- * Контент (html) данной страницы прописывается здесь -->
+<div>Расписание аудитории №{{audience.title}}</div>
+<div>{{date}}</div>
+<a href="{% querystring date=prev_date %}"> Предыдущая неделя</a>
+<a href="{% querystring date=next_date %}"> Следующая неделя</a>
+<div>
+    {% for day in days %}
+        {% for ct in class_time %}
+            <div>
+                <span>{{day}} {{ct.start}}-{{ct.end}}</span>
 
-
+                {% for reservation in reservations %}
+                    {% with flag=forloop.last %}
+                    {% if reservation.time_start.time == ct.start and reservation.time_end.time == ct.end and reservation.time_start.date == day %}
+                        <span>{{reservation.title}} {{reservation.speaker}}</span>
+                    {% elif flag %}
+                        <form action="{% url 'audience_detail' campus=audience.campus.id audience_id=audience.id %}" method="post">
+                            {% csrf_token %}
+                            {{form.as_table}}
+                            <button type="submit">Забронировать</button>
+                        </form>
+                    {% endif %}
+                    {% endwith %}
+                {% empty %}
+                    <form action="{% url 'audience_detail' campus=audience.campus.id audience_id=audience.id %}" method="post">
+                        {% csrf_token %}
+                        {{form.as_table}}
+                        <button type="submit">Забронировать</button>
+                    </form>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
 {%endblock%}
