@@ -2,8 +2,6 @@ from datetime import date, datetime, timedelta
 
 class LessonMixin:
     dateformat = '%d %B %Y'
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
     @staticmethod
     def get_the_range_of_the_week(_date):
