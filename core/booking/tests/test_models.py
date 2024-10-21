@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.core.cache import cache
 from django.test import TestCase
 from datetime import datetime, timezone
 
@@ -11,6 +12,7 @@ def create_campus_object(title):
         address='-',
         start_of_work=datetime(2024, 12, 1, 8, 0, tzinfo=timezone.utc),
         end_of_work=datetime(2024, 12, 1, 20, 0, tzinfo=timezone.utc),
+        is_active=True
     )
 
 class CampusTestCase(TestCase):
@@ -39,6 +41,8 @@ class CampusTestCase(TestCase):
             self.campus1.get_time_of_work(), f"{day_start}-{day_end}: {time_start}-{time_end}"
         )
 
+
+
 class ReservationTestCase(TestCase):
     def setUp(self):
         self.campus1 = create_campus_object("test_campus_1")
@@ -63,7 +67,7 @@ class ReservationTestCase(TestCase):
             time_start=datetime(2024, 10, 1, 10, 30, tzinfo=timezone.utc),
             time_end=datetime(2024, 10, 1, 12, 30, tzinfo=timezone.utc),
             speaker='lector',
-            _type='lecture'
+            type='lecture'
         )
         self.reservation2 = Reservation.objects.create(
             audience=self.audience2,
@@ -71,7 +75,7 @@ class ReservationTestCase(TestCase):
             time_start=datetime(2024, 10, 1, 14, 30, tzinfo=timezone.utc),
             time_end=datetime(2024, 10, 1, 18, 30, tzinfo=timezone.utc),
             speaker='lector',
-            _type='lecture'
+            type='lecture'
         )
 
     def test_datetime(self):
@@ -87,7 +91,8 @@ class ReservationTestCase(TestCase):
             address='-',
             phone='-',
             start_of_work=datetime(2024, 1, 12, 8, 0, tzinfo=timezone.utc),
-            end_of_work=datetime(2024, 1, 12, 20, 0, tzinfo=timezone.utc)
+            end_of_work=datetime(2024, 1, 12, 20, 0, tzinfo=timezone.utc),
+            is_active=True
         )
         audience = Audience(
             campus=campus,
@@ -101,7 +106,7 @@ class ReservationTestCase(TestCase):
             time_start=datetime(2024, 10, 1, 1, 30, tzinfo=timezone.utc),
             time_end=datetime(2024, 10, 1, 4, 30, tzinfo=timezone.utc),
             speaker='lector',
-            _type='lecture'
+            type='lecture'
         )
         exception_message = "Fail. Hours of reservation between %d and %d not allowed." % (campus.end_of_work.hour, campus.start_of_work.hour)
         with self.assertRaisesMessage(ValidationError, exception_message):
@@ -113,7 +118,7 @@ class ReservationTestCase(TestCase):
             time_start=datetime(2024, 10, 1, 8, 0, tzinfo=timezone.utc),
             time_end=datetime(2024, 10, 1, 16, 0, tzinfo=timezone.utc),
             speaker='lector',
-            _type='lecture'
+            type='lecture'
         )
         self.assertIsNone(good_reservation.validate_time_interval())
 
@@ -127,7 +132,7 @@ class ReservationTestCase(TestCase):
                 time_start=datetime(2024, 10, 1, 15, 30, tzinfo=timezone.utc),
                 time_end=datetime(2024, 10, 1, 16, 30, tzinfo=timezone.utc),
                 speaker='lector',
-                _type='lecture'
+                type='lecture'
             )
             exist_reservation.check_exist_reservation()
 
@@ -138,7 +143,7 @@ class ReservationTestCase(TestCase):
             time_start=datetime(2024, 10, 1, 7, 30, tzinfo=timezone.utc),
             time_end=datetime(2024, 10, 1, 9, 30, tzinfo=timezone.utc),
             speaker='lector',
-            _type='lecture'
+            type='lecture'
         )
         no_exist_reservation.check_exist_reservation()
 
@@ -150,7 +155,7 @@ class ReservationTestCase(TestCase):
                 time_start=datetime(2024, 10, 17, 7, 30, tzinfo=timezone.utc),
                 time_end=datetime(2024, 10, 1, 9, 30, tzinfo=timezone.utc),
                 speaker='lector',
-                _type='lecture'
+                type='lecture'
             )
             invalid_reservation.check_range_of_date()
 
@@ -160,7 +165,7 @@ class ReservationTestCase(TestCase):
             time_start=datetime(2024, 10, 17, 7, 30, tzinfo=timezone.utc),
             time_end=datetime(2024, 10, 17, 9, 30, tzinfo=timezone.utc),
             speaker='lector',
-            _type='lecture'
+            type='lecture'
         )
         valid_reservation.check_range_of_date()
 
@@ -197,4 +202,47 @@ class AudienceTestCase(TestCase):
     def test_meta(self):
         self.assertEqual(self.aud1._meta.verbose_name_plural, 'Аудитории')
         self.assertEqual(self.aud2._meta.verbose_name_plural, 'Аудитории')
+
+
+class CacheTest(TestCase):
+    def setUp(self):
+        self.campus = Campus(
+            title='some_campus',
+            phone='-',
+            address='-',
+            start_of_work=datetime(2024, 12, 1, 8, 0, tzinfo=timezone.utc),
+            end_of_work=datetime(2024, 12, 1, 20, 0, tzinfo=timezone.utc),
+            is_active=True
+        )
+        self.campus.save()
+        self.user = User.objects.create_user('test_user')
+        self.audience = Audience(
+            campus=self.campus,
+            user=self.user,
+            title=1,
+            floor=1
+        )
+        self.audience.save()
+        self.reservation = Reservation(
+            audience=self.audience,
+            title='R3',
+            time_start=datetime(2024, 10, 1, 8, 30, tzinfo=timezone.utc),
+            time_end=datetime(2024, 10, 1, 19, 30, tzinfo=timezone.utc),
+            speaker='lector',
+            type='lecture'
+        )
+        self.reservation.save()
+        self.keys = [
+            'campuses',
+            f'campus_audiences:{self.campus.id}',
+            f'floors:{self.campus.id}',
+            f'audience:{self.audience.id}',
+            f'audience_reservations:{self.audience.id}',
+        ]
+
+    def test_cache(self):
+        self.assertEqual(
+            cache.get_many(self.keys), {}
+        )
+
 
