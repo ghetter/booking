@@ -26,7 +26,7 @@ class Campus(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        cache.clear()
+        cache.delete('campuses')
         return super().save(*args, **kwargs)
 
 class Audience(models.Model):
@@ -43,7 +43,7 @@ class Audience(models.Model):
         return str(self.title)
 
     def save(self, *args, **kwargs):
-        cache.clear()
+        cache.delete(f'campus_audiences:{self.campus.id}')
         return super().save(*args, **kwargs)
 
 class Reservation(models.Model):
@@ -90,7 +90,7 @@ class Reservation(models.Model):
                 raise ValidationError('Fail. In that time audience is reserved.')
 
     def save(self, *args, **kwargs):
-        cache.clear()
+        cache.delete(f'audience_reservations:{self.audience.id}')
         self.check_range_of_date()
         self.validate_time_interval()
         self.check_exist_reservation()

@@ -14,7 +14,8 @@ class ReservationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
     def save(self, commit=True):
-        cache.clear()
+        if self.audience is not None:
+            cache.delete(f'audience_reservations:{self.audience.id}')
         instance = super().save(commit=False)
         if self.audience:
             instance.audience = self.audience
