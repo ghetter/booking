@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.cache import cache
 from django.db import models
 
 class Campus(models.Model):
@@ -24,6 +25,10 @@ class Campus(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        cache.clear()
+        return super().save(*args, **kwargs)
+
 class Audience(models.Model):
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE, related_name='audiences')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='audiences')
@@ -36,6 +41,10 @@ class Audience(models.Model):
 
     def __str__(self):
         return str(self.title)
+
+    def save(self, *args, **kwargs):
+        cache.clear()
+        return super().save(*args, **kwargs)
 
 class Reservation(models.Model):
     audience = models.ForeignKey(Audience, on_delete=models.CASCADE, related_name='reservations')
@@ -81,6 +90,7 @@ class Reservation(models.Model):
                 raise ValidationError('Fail. In that time audience is reserved.')
 
     def save(self, *args, **kwargs):
+        cache.clear()
         self.check_range_of_date()
         self.validate_time_interval()
         self.check_exist_reservation()

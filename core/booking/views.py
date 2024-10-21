@@ -39,18 +39,10 @@ class AudienceListView(ListView):
 
     def get_queryset(self):
         campus_id = self.kwargs['campus']
-        campus = cache.get(f'campus:{campus_id}')
-
-        if campus is None:
-            campus = Campus.objects.get(id=campus_id)
-            cache.set(f'campus:{campus_id}', pickle.dumps(campus), 60 * 10)
-        else:
-            campus = pickle.loads(campus)
-
         audiences = cache.get(f'campus_audiences:{campus_id}')
         if audiences is None:
-            audiences = Audience.objects.filter(campus=campus)
-            cache.set(f'campus_audiences:{campus_id}', pickle.dumps(audiences), 60 * 10)
+            audiences = Audience.objects.filter(campus__id=campus_id)
+            cache.set(f'campus_audiences:{campus_id}', pickle.dumps(audiences), 60 * 24)
         else:
             audiences = pickle.loads(audiences)
 
@@ -62,7 +54,7 @@ class AudienceListView(ListView):
         floors = cache.get(f'floors:{campus_id}')
         if floors is None:
             floors = self.object_list.values_list('floor', flat=True).order_by().distinct()
-            cache.set(f'floors:{campus_id}', pickle.dumps(floors), 60 * 10)
+            cache.set(f'floors:{campus_id}', pickle.dumps(floors), 60 * 24)
         else:
             floors = pickle.loads(floors)
         context['floors'] = floors
@@ -105,7 +97,7 @@ class AudienceDetailView(LessonMixin, FormMixin, DetailView):
         audience = cache.get(f'audience:{audience_id}')
         if audience is None:
             audience = Audience.objects.get(pk=audience_id)
-            cache.set(f'audience:{audience_id}', pickle.dumps(audience), 60 * 10)
+            cache.set(f'audience:{audience_id}', pickle.dumps(audience), 60 * 24)
         else:
             audience = pickle.loads(audience)
         return audience
