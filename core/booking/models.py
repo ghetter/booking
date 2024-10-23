@@ -86,6 +86,8 @@ class Reservation(models.Model):
     def check_exist_reservation(self):
         objects = Reservation.objects.filter(time_start__date=self.time_start.date())
         for object in objects:
+            if object.id == self.id:
+                continue
             if (object.time_start <= self.time_start <= object.time_end) or (object.time_start <= self.time_end <= object.time_end):
                 raise ValidationError('Fail. In that time audience is reserved.')
 
