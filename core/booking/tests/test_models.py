@@ -169,6 +169,21 @@ class ReservationTestCase(TestCase):
         )
         valid_reservation.check_range_of_date()
 
+    def test_update_type_in_model(self):
+        reservation = Reservation(
+            audience=self.audience2,
+            title='some reservation',
+            time_start=datetime(2024, 10, 17, 8, 30, tzinfo=timezone.utc),
+            time_end=datetime(2024, 10, 17, 9, 30, tzinfo=timezone.utc),
+            speaker='lector',
+            type='lecture'
+        )
+        reservation.save()
+
+        reservation.type = 'examination'
+        self.assertIsNone(reservation.check_exist_reservation())
+
+
 
 
 class AudienceTestCase(TestCase):
