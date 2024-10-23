@@ -1,41 +1,249 @@
-{%extends 'booking/index.html' %}
+{% extends 'booking/index.html' %}
 
-{%block title%}
+{% load static %}
+
+{% block title %}
 <!-- * title страницы -->
-{%endblock%}
+{% endblock %}
 
-{%block content%}
-<div>Расписание аудитории №{{audience.title}}</div>
-<div>{{date}}</div>
-<a href="{% querystring date=prev_date %}"> Предыдущая неделя</a>
-<a href="{% querystring date=next_date %}"> Следующая неделя</a>
-<div>
-    {% for day in days %}
-        {% for ct in class_time %}
-            <div>
-                <span>{{day}} {{ct.start}}-{{ct.end}}</span>
-
-                {% for reservation in reservations %}
-                    {% with flag=forloop.last %}
-                    {% if reservation.time_start.time == ct.start and reservation.time_end.time == ct.end and reservation.time_start.date == day %}
-                        <span>{{reservation.title}} {{reservation.speaker}}</span>
-                    {% elif flag %}
-                        <form action="{% url 'audience_detail' campus=audience.campus.id audience_id=audience.id %}" method="post">
-                            {% csrf_token %}
-                            {{form.as_table}}
-                            <button type="submit">Забронировать</button>
-                        </form>
-                    {% endif %}
-                    {% endwith %}
-                {% empty %}
-                    <form action="{% url 'audience_detail' campus=audience.campus.id audience_id=audience.id %}" method="post">
-                        {% csrf_token %}
-                        {{form.as_table}}
-                        <button type="submit">Забронировать</button>
-                    </form>
-                {% endfor %}
+{% block content %}
+<main class="main schedule">
+    <div class="container main-container">
+        <a href="#" class="main__back">
+            <img src="{% static 'img/booking/mainBackArrow.svg' %}" alt="">
+        </a>
+        <div class="main__title">Расписание аудитории №{{audience.title}}</div>
+    </div>
+    <div class="container">
+        <div class="schedule__period period">
+            <div class="period__date">{{date}}</div>
+            <div class="period__week"></div>
+        </div>
+        <div class="schedule__nav">
+                <a class="schedule__nav-prevWeek" href="{% querystring date=prev_date %}">
+                    <img src="{% static 'img/booking/prevWeekArrow.svg' %}" alt="">
+                    <p>Предыдущая неделя</p>
+                </a>
+                <a class="schedule__nav-nextWeek" href="{% querystring date=next_date %}">
+                    <p>Следующая неделя</p>
+                    <img src="{% static 'img/booking/nextWeekArrow.svg' %}" alt="">
+                </a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="schedule__table table">
+            <div class="table__column table__class-time ct">
+                <div class="table__element ct__row ct__row-corner"></div>
+            {% for ct in class_time %}
+                <div class="table__element ct__row">
+                    <div class="ct__timestamp-from">
+                        {{ct.start}}
+                    </div>
+                    <div class="ct__timestamp-to">
+                        {{ct.end}}
+                    </div>
+                </div>
+            {% endfor %}
             </div>
-        {% endfor %}
-    {% endfor %}
-</div>
-{%endblock%}
+            {% for day in days %}
+                <div class="table__column">
+                    <div class="table__element table__heading">
+                        <div class="table__heading-weekday">
+                            ПН
+                        </div>
+                        <div class="table__heading-date">
+                            {{day}}
+                        </div>
+                    </div>
+                    {% for ct in class_time %}
+                        <div class="table__element table__field" date-day="{{ day }}" time-start="{{ ct.start }}" time-end="{{ ct.end }}">
+                            {% with flag=forloop.last %}
+                                {% if not reservations %}
+                                {% else %}
+                                    {% for reservation in reservations %}
+                                        {% if reservation.time_start.time == ct.start and reservation.time_end.time == ct.end and reservation.time_start.date == day %}
+                                            <div class="table__subject subject seminar">
+                                                <div class="subject__name">
+                                                    {{ reservation.title }}
+                                                </div>
+                                                <div class="subject__teacher">
+                                                    {{ reservation.speaker }}
+                                                </div>
+                                            </div>
+                                        {% elif flag %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Получаем элемент с классом 'period__date'
+        const dateElement = document.querySelector('.period__date');
+
+        // Извлекаем текст интервала
+        let dateText = dateElement.textContent;
+
+        // Заменяем английские названия месяцев на русские
+        const monthMap = {
+            "January": "января",
+            "February": "февраля",
+            "March": "марта",
+            "April": "апреля",
+            "May": "мая",
+            "June": "июня",
+            "July": "июля",
+            "August": "августа",
+            "September": "сентября",
+            "October": "октября",
+            "November": "ноября",
+            "December": "декабря"
+        };
+
+        // Заменяем названия месяцев
+        for (const [en, ru] of Object.entries(monthMap)) {
+            dateText = dateText.replace(new RegExp(en, 'g'), ru);
+        }
+
+        // Заменяем символ '–' на '-'
+        dateText = dateText.replace(' – ', ' - ');
+
+        // Убираем ведущие нули из дат
+        dateText = dateText.replace(/\b0(\d)/g, '$1');
+
+        // Обновляем текст элемента
+        dateElement.textContent = dateText;
+
+        // Вычисляем номер учебной недели
+        const currentYear = new Date().getFullYear();
+        const startOfSchoolYear = new Date(currentYear, 8, 2); // 2 сентября текущего года
+
+        // Извлекаем первую дату интервала
+        const [startDateStr] = dateText.split(' - ');
+
+        // Преобразуем дату в формат YYYY-MM-DD
+        const normalizedStartDateStr = startDateStr.replace(/(\d{1,2})\s([а-я]+)\s(\d{4})/, (match, day, month, year) => {
+            const monthNumber = {
+                'января': '01',
+                'февраля': '02',
+                'марта': '03',
+                'апреля': '04',
+                'мая': '05',
+                'июня': '06',
+                'июля': '07',
+                'августа': '08',
+                'сентября': '09',
+                'октября': '10',
+                'ноября': '11',
+                'декабря': '12'
+            }[month];
+            return `${year}-${monthNumber}-${day}`;
+        });
+
+        // Создаем объект даты
+        const startDate = new Date(normalizedStartDateStr);
+
+        // Проверяем корректность даты
+        if (isNaN(startDate.getTime())) {
+            console.error("Некорректная дата:", normalizedStartDateStr);
+            return; // Выходим из функции, если дата некорректна
+        }
+
+        // Вычисляем разницу в миллисекундах между датами
+        const diffTime = startDate - startOfSchoolYear;
+        
+        // Вычисляем номер учебной недели
+        const weekNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7)) + 1;
+
+        // Получаем элемент с классом 'period__week' и выводим номер учебной недели
+        const weekElement = document.querySelector('.period__week');
+        if (weekElement) {
+            weekElement.textContent = `${weekNumber}-я неделя`;
+        }
+
+        // Функция для преобразования времени в 24-часовой формат
+        function formatTimeTo24Hour(timeStr) {
+            const parts = timeStr.split(' ');
+            let [hours, minutes] = parts[0].split(':');
+            const modifier = parts[1];
+
+            if (!minutes) {
+                minutes = '00'; // Если минут нет, устанавливаем их в 00
+            }
+
+            if (modifier === 'p.m.' && hours !== '12') {
+                hours = parseInt(hours, 10) + 12;
+            } else if (modifier === 'a.m.' && hours === '12') {
+                hours = '00';
+            }
+
+            return `${hours}:${minutes}`;
+        }
+
+        // Обрабатываем все элементы '.ct__timestamp-from' и '.ct__timestamp-to'
+        document.querySelectorAll('.ct__timestamp-from').forEach(fromElement => {
+            fromElement.textContent = formatTimeTo24Hour(fromElement.textContent.trim());
+        });
+
+        document.querySelectorAll('.ct__timestamp-to').forEach(toElement => {
+            toElement.textContent = formatTimeTo24Hour(toElement.textContent.trim());
+        });
+
+        // Функция для форматирования дат в '.table__heading-date'
+        function formatTableHeadingDate(dateStr) {
+            const [monthAbbrev, day] = dateStr.split(' ');
+            
+            const monthMapShort = {
+                "Jan.": "янв.",
+                "Feb.": "фев.",
+                "Mar.": "мар.",
+                "Apr.": "апр.",
+                "May": "май",
+                "Jun.": "июн.",
+                "Jul.": "июл.",
+                "Aug.": "авг.",
+                "Sep.": "сен.",
+                "Oct.": "окт.",
+                "Nov.": "нояб.",
+                "Dec.": "дек."
+            };
+
+            return `${day.replace(',', '')} ${monthMapShort[monthAbbrev]}`; // Убираем запятую и заменяем месяц
+        }
+
+        // Обрабатываем все элементы '.table__heading-date'
+        document.querySelectorAll('.table__heading-date').forEach(dateElem => {
+            dateElem.textContent = formatTableHeadingDate(dateElem.textContent.trim());
+        });
+    });
+
+    const scheduleElements = document.querySelectorAll('.table__field');
+    scheduleElements.forEach(field => {
+        // Проверяем наличие дочернего элемента с классом '.table__subject'
+        if (field.querySelector('.table__subject')) {
+            field.classList.remove('empty');
+            console.log('Класс удалён');
+        } else {
+            field.classList.add('empty');
+            field.innerHTML += `
+                <a href="#" class="bookNow">
+                    <div class="bookNow__inner">
+                        <img src="{% static 'img/booking/bookNowPlusIcon.svg'%}" alt="">
+                        <p>Забронировать</p>
+                    </div>
+                </a>
+            `;
+            console.log('Класс добавлен');
+        }
+    });
+</script>
+{% endblock %}
+
+{% block styles %}
+{% endblock %}
