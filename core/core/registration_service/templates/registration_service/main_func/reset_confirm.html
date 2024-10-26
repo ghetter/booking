@@ -1,0 +1,18 @@
+{%extends 'registration_service/index.html' %}
+
+{%block title%}
+Смена пароля | Booking
+{%endblock%}
+
+{%block content%}
+
+<form action="{% url 'login' %}" method="get">
+    {% csrf_token %}
+    <div class="form__title">
+        <span>Смена пароля</span>
+    </div>
+    {{form.new_password1}}
+    {{form.new_password2}}
+    <button type="submit" class="form__submit _tr02easeIn">Сменить пароль</button>
+</form>
+{%endblock%}
