@@ -1,11 +1,167 @@
-{%extends 'booking/base.html' %}
+{% extends 'booking/index.html' %}
 
-{%block title%}
-<!-- * title страницы -->
-{%endblock%}
+{% load static %}
 
-{%block content%}
-<!-- * Контент (html) данной страницы прописывается здесь -->
+{% block title %}
+Расписание аудитории №{{audience.title}}
+{% endblock %}
 
+{% block content %}
+<main class="main schedule">
+    <div class="container main-container">
+        <a href="#" class="main__back">
+            <img src="{% static 'img/booking/mainBackArrow.svg' %}" alt="">
+        </a>
+        <div class="main__title">Расписание аудитории №{{audience.title}}</div>
+    </div>
+    <div class="container">
+        <div class="schedule__period period">
+            <div class="period__date">{{date}}</div>
+            <div class="period__week"></div>
+        </div>
+        <div class="schedule__nav">
+                <a class="schedule__nav-prevWeek" href="{% querystring date=prev_date %}">
+                    <img src="{% static 'img/booking/prevWeekArrow.svg' %}" alt="">
+                    <p>Предыдущая неделя</p>
+                </a>
+                <a class="schedule__nav-nextWeek" href="{% querystring date=next_date %}">
+                    <p>Следующая неделя</p>
+                    <img src="{% static 'img/booking/nextWeekArrow.svg' %}" alt="">
+                </a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="schedule__table table">
+            <div class="table__column table__class-time ct">
+                <div class="table__element ct__row ct__row-corner"></div>
+            {% for ct in class_time %}
+                <div class="table__element ct__row">
+                    <div class="ct__timestamp-from">
+                        {{ct.start}}
+                    </div>
+                    <div class="ct__timestamp-to">
+                        {{ct.end}}
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+            {% for day in days %}
+                <div class="table__column">
+                    <div class="table__element table__heading">
+                        <div class="table__heading-weekday">
+                            
+                        </div>
+                        <div class="table__heading-date">
+                            {{day}}
+                        </div>
+                    </div>
+                    {% for ct in class_time %}
+                        <div class="table__element table__field" date-day="{{ day }}" time-start="{{ ct.start }}" time-end="{{ ct.end }}">
+                            {% with flag=forloop.last %}
+                                {% if not reservations %}
+                                {% else %}
+                                    {% for reservation in reservations %}
+                                        {% if reservation.time_start.time == ct.start and reservation.time_end.time == ct.end and reservation.time_start.date == day %}
+                                            <div class="table__subject subject {{reservation.type}}">
+                                                <div class="subject__name">
+                                                    {{ reservation.title }}
+                                                </div>
+                                                <div class="subject__teacher">
+                                                    {{ reservation.speaker }}
+                                                </div>
+                                            </div>
+                                        {% elif flag %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="pop-ups">
+        <div class="pop-up__bookingForm pop-up">
+            <div class="container">
+            <form action="#" method="POST" class="form">
+                {% csrf_token %}
+                <div class="form__header">
+                    <div class="form__header-title">
+                        Бронирование аудитории
+                    </div>
+                    <div class="form__header-CloseBtn">
+                        <img src="{% static 'img/booking/form_nav-crossbtn.svg' %}" alt="">
+                    </div>
+                </div>
+                <div class="form__field-auto">
+                    <div class="form__field-heading">Аудитория</div>
+                    <div class="form__field-value" id="form__audience-id">{{audience.title}}</div>
+                </div>
+                <div class="form__field-auto">
+                    <div class="form__field-heading">Время</div>
+                    <div class="form__field-value">
+                        {{form.time_start}}
+                        {{form.time_end}}
+                        <div class="form__field-value-From" id="form__time-start_visible"></div>
+                        <div class="form__field-value-To" id="form__time-end_visible"></div>
+                        </div>
+                </div>
+                <div class="form__field-auto">
+                    <div class="form__field-heading">Преподаватель</div>
+                    <div class="form__field-value" id="form__speaker">{{user.get_full_name}}</div>
+                    {{form.speaker}}
+                </div>
+                <div class="form__field-manual">
+                    <div class="form__field-heading">Название предмета</div>
+                    {{form.title}}
+                </div>
+                <div class="form__field-manual">
+                    <div class="form__field-heading">Вид занятия</div>
+                    <div class="form__select custom-select">
+                        <div class="custom-select__sfield">
+                          <div class="custom-select__soption">Выберите</div>
+                          <img class="custom-select__soption-icon" src="{% static 'img/booking/form_list-arrow.svg' %}" alt="">
+                        </div>
+                        <div class="custom-select__list">
+                          <div class="custom-select__option s-typed" data-value="none">---</div>
+                          <div class="custom-select__option lecture-typed" data-value="lecture">Лекция</div>
+                          <div class="custom-select__option practice-typed" data-value="practice">Практическое занятие</div>
+                          <div class="custom-select__option seminar-typed" data-value="seminar">Семинар</div>
+                          <div class="custom-select__option exam-typed" data-value="examination">Экзамен</div>
+                          <div class="custom-select__option lab-typed" data-value="lab">Лабораторная</div>
+                        </div>
+                      </div>
+                    {{form.type}}
+                </div>
+                <button type="submit" class="form__button form__booking">Забронировать</button>
+            </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        const scheduleElements = document.querySelectorAll('.table__field');
+        scheduleElements.forEach(field => {
+            // Проверяем наличие дочернего элемента с классом '.table__subject'
+            if (field.querySelector('.table__subject')) {
+                field.classList.remove('empty');
+                console.log('Класс удалён');
+            } else {
+                field.classList.add('empty');
+                field.innerHTML += `
+                    <a href="#" class="bookNow">
+                        <div class="bookNow__inner">
+                            <img src="{% static 'img/booking/bookNowPlusIcon.svg' %}" alt="">
+                            <p>Забронировать</p>
+                        </div>
+                    </a>
+                `;
+                console.log('Класс добавлен');
+            }
+        });
+    </script>
+</main>
+{% endblock %}
 
-{%endblock%}
+{% block styles %}
+{% endblock %}

@@ -1,0 +1,32 @@
+{%extends 'registration_service/index.html' %}
+
+{%block title%}
+Регистрация | Booking
+{%endblock%}
+
+{%block content%}
+<form action="{% url 'registration' %}" method="post">
+    {% csrf_token %}
+    <div class="form__title">
+        Регистрация <span>или <a href="{% url 'login' %}">войдите</a></span>
+    </div>
+    {{form.first_name}}
+    {{form.last_name}}
+    {{form.username}}
+    {{form.email}}
+    {{form.password1}}
+    {{form.password2}}
+    {% if form.errors %}
+        <div class="form-errors">
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    <li>{{ field }}: {{ errors }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    <button type="submit" class="form__submit _tr02easeIn">Войти</button>
+
+</form>
+
+{%endblock%}

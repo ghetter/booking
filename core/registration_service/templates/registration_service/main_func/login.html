@@ -1,0 +1,28 @@
+{%extends 'registration_service/index.html' %}
+
+{%block title%}
+Авторизация | Booking
+{%endblock%}
+
+{%block content%}
+
+<form action="{% url 'login' %}" method="post">
+    {% csrf_token %}
+    <div class="form__title">
+        Вход <span>или <a href="{% url 'registration' %}">зарегистрируйтесь</a></span>
+    </div>
+    {{form.username}}
+    {{form.password}}
+    <div class="form__options">
+        <div class="form__options_sel">
+
+        <label for="rememberPassID">
+            {{form.remember}}
+            Запомнить пароль
+        </label>
+        </div>
+        <span><a href="{% url 'password_reset' %}">Забыли пароль?</a></span>
+    </div>
+    <button type="submit" class="form__submit _tr02easeIn">Войти</button>
+</form>
+{%endblock%}
