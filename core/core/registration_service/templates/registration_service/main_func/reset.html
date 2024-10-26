@@ -1,0 +1,16 @@
+{%extends 'registration_service/index.html' %}
+
+{%block title%}
+Восстановление доступа | Booking
+{%endblock%}
+
+{%block content%}
+<form action="{% url 'password_reset' %}" method="post">
+    {% csrf_token %}
+    <div class="form__title">
+        Сброс пароля <span>или <a href="{% url 'login' %}">войдите</a></span>
+    </div>
+    {{form.email}}
+    <button type="submit" class="form__submit _tr02easeIn">Сбросить</button>
+</form>
+{%endblock%}
